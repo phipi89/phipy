@@ -1,0 +1,13 @@
+[project]
+name = "phipy-dev"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = ["phipy", "phipy-plots"]
+
+[tool.uv]
+# Replace the library's direct Git requirement with the local source below.
+override-dependencies = ["phipy-plots"]
+
+[tool.uv.sources]
+phipy = { path = "..", editable = true }
+phipy-plots = { path = "../../phipy-plots", editable = true }

@@ -27,16 +27,31 @@ uv add git+https://github.com/phipi89/phipy
 ```
 
 ### Local development
-Inside this repository, `uv sync` installs `phipy` and sibling
-`../phipy-plots` editably through the local `[tool.uv.sources]` override.
+Inside this repository, the dedicated development project installs `phipy`
+and sibling `../phipy-plots` editably:
+
+```bash
+uv sync --project dev
+uv run --project dev python -m unittest discover -s tests -v
+```
+
+The local overrides live in `dev/pyproject.toml`, keeping them out of the
+library's dependency metadata. Plain `uv sync` uses GitHub `phipy-plots`.
 
 To use both local repositories editably from another project, add both
 explicitly (adjust the paths for your layout):
+
+First merge this override into that project's `pyproject.toml` so it can
+replace the direct Git requirement:
+
+```toml
+[tool.uv]
+override-dependencies = ["phipy-plots"]
+```
 
 ```bash
 uv add --editable ../phipy ../phipy-plots
 ```
 
-Dependency projects' uv source overrides are not inherited by the consuming
-project. Adding only local editable `phipy` therefore still uses the Git
-version of `phipy-plots`.
+Adding only local editable `phipy` uses the Git version of `phipy-plots`.
+Add both paths explicitly when you want both repositories editable.

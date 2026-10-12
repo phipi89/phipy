@@ -20,7 +20,3 @@ build-backend = "hatchling.build"
 
 [tool.hatch.metadata]
 allow-direct-references = true
-
-[tool.uv.sources]
-# Local development override; installed packages use the Git dependency above.
-phipy-plots = { path = "../phipy-plots", editable = true }
