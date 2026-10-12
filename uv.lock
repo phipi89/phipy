@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.13"
 
 [[package]]
@@ -127,39 +127,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/cc/28/c14e053b6762b1044f34a13aab6859bbf40456d37d23aa286ac24cfd9a5d/executing-2.2.1.tar.gz", hash = "sha256:3632cc370565f6648cc328b32435bd120a1e4ebb20c77e3fdde9a13cd1e533c4", size = 1129488, upload-time = "2025-09-01T09:48:10.866Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c1/ea/53f2148663b321f21b5a606bd5f191517cf40b7072c0497d3c92c4a13b1e/executing-2.2.1-py2.py3-none-any.whl", hash = "sha256:760643d3452b4d777d295bb167ccc74c64a81df23fb5e08eff250c425a4b2017", size = 28317, upload-time = "2025-09-01T09:48:08.5Z" },
-]
-
-[[package]]
-name = "figtools"
-version = "0.1.0"
-source = { editable = "../figtools" }
-dependencies = [
-    { name = "colorhash" },
-    { name = "colorlover" },
-    { name = "colorutils" },
-    { name = "cycler" },
-    { name = "ipython" },
-    { name = "matplotlib" },
-    { name = "networkx" },
-    { name = "numpy" },
-    { name = "pillow" },
-    { name = "plotly" },
-    { name = "scipy" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "colorhash", specifier = ">=2.1.0" },
-    { name = "colorlover", specifier = ">=0.3.0" },
-    { name = "colorutils", specifier = ">=0.3.0" },
-    { name = "cycler" },
-    { name = "ipython" },
-    { name = "matplotlib", specifier = ">=3.9.4" },
-    { name = "networkx" },
-    { name = "numpy", specifier = ">=2.4.0" },
-    { name = "pillow" },
-    { name = "plotly", specifier = ">=6.2.0" },
-    { name = "scipy", specifier = ">=1.13.1" },
 ]
 
 [[package]]
@@ -485,6 +452,64 @@ wheels = [
 ]
 
 [[package]]
+name = "phipy"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "manifold3d" },
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "phipy-plots" },
+    { name = "scipy" },
+    { name = "tqdm" },
+    { name = "trimesh" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "manifold3d", specifier = ">=3.5.1" },
+    { name = "matplotlib", specifier = ">=3.9.4" },
+    { name = "numpy", specifier = ">=2.4.0" },
+    { name = "phipy-plots", editable = "../phipy-plots" },
+    { name = "scipy", specifier = ">=1.13.1" },
+    { name = "tqdm", specifier = ">=4.66.0" },
+    { name = "trimesh", specifier = ">=4.6.13" },
+]
+
+[[package]]
+name = "phipy-plots"
+version = "0.2.0"
+source = { editable = "../phipy-plots" }
+dependencies = [
+    { name = "colorhash" },
+    { name = "colorlover" },
+    { name = "colorutils" },
+    { name = "cycler" },
+    { name = "ipython" },
+    { name = "matplotlib" },
+    { name = "networkx" },
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "plotly" },
+    { name = "scipy" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "colorhash", specifier = ">=2.1.0" },
+    { name = "colorlover", specifier = ">=0.3.0" },
+    { name = "colorutils", specifier = ">=0.3.0" },
+    { name = "cycler" },
+    { name = "ipython" },
+    { name = "matplotlib", specifier = ">=3.9.4" },
+    { name = "networkx" },
+    { name = "numpy", specifier = ">=2.4.0" },
+    { name = "pillow" },
+    { name = "plotly", specifier = ">=6.2.0" },
+    { name = "scipy", specifier = ">=1.13.1" },
+]
+
+[[package]]
 name = "pillow"
 version = "12.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -705,31 +730,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/28/e3/55dcc2cfbc3ca9c29519eb6884dd1415ecb53b0e934862d3559ddcb7e20b/stack_data-0.6.3.tar.gz", hash = "sha256:836a778de4fec4dcd1dcd89ed8abff8a221f58308462e1c4aa2a3cf30148f0b9", size = 44707, upload-time = "2023-09-30T13:58:05.479Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f1/7b/ce1eafaf1a76852e2ec9b22edecf1daa58175c090266e9f6c64afcd81d91/stack_data-0.6.3-py3-none-any.whl", hash = "sha256:d5558e0c25a4cb0853cddad3d77da9891a08cb85dd9f9f91b9f8cd66e511e695", size = 24521, upload-time = "2023-09-30T13:58:03.53Z" },
-]
-
-[[package]]
-name = "phipy"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "figtools" },
-    { name = "manifold3d" },
-    { name = "matplotlib" },
-    { name = "numpy" },
-    { name = "scipy" },
-    { name = "tqdm" },
-    { name = "trimesh" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "figtools", editable = "../figtools" },
-    { name = "manifold3d", specifier = ">=3.5.1" },
-    { name = "matplotlib", specifier = ">=3.9.4" },
-    { name = "numpy", specifier = ">=2.4.0" },
-    { name = "scipy", specifier = ">=1.13.1" },
-    { name = "tqdm", specifier = ">=4.66.0" },
-    { name = "trimesh", specifier = ">=4.6.13" },
 ]
 
 [[package]]

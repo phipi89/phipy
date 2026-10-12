@@ -1,22 +1,16 @@
 from collections.abc import Callable, Sequence
 from typing import Literal, overload
+import warnings as _warnings
 
 import numpy as np
 import numpy.typing as npt
-from scipy.interpolate import interp1d, splprep, splev
+from scipy.interpolate import interp1d, splev, splprep
 from scipy.spatial.distance import cdist
 from scipy.spatial.transform import Rotation
 from scipy.stats import zscore
 
-from phipy.array import identity
-
-
-def normalized(array: npt.ArrayLike) -> np.ndarray:
-    """Return vectors scaled to unit length along their last axis."""
-    if np.ndim(array) >= 2:
-        return np.asarray(array) / (np.linalg.norm(array, axis=-1)[:, None])
-    else:
-        return np.asarray(array) / np.linalg.norm(array, axis=-1)
+from phipy.array import normalized
+from phipy.utils import identity
 
 
 def distance(a: npt.ArrayLike, b: npt.ArrayLike) -> float | np.ndarray:
@@ -30,7 +24,9 @@ def distance(a: npt.ArrayLike, b: npt.ArrayLike) -> float | np.ndarray:
         return np.linalg.norm(b - a, axis=1)
 
 
-def direction_vector(start_point: npt.ArrayLike, end_point: npt.ArrayLike) -> np.ndarray:
+def direction_vector(
+    start_point: npt.ArrayLike, end_point: npt.ArrayLike
+) -> np.ndarray:
     """Return the unit vector from one point to another."""
     return normalized(end_point - start_point)
 
@@ -195,6 +191,47 @@ def vector_angle(
     return conversion(
         sign * np.arccos(np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2)))
     )
+
+
+def plane_from_points(
+    points: npt.ArrayLike, warn: bool = True
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return the centroid and unit normal of a hyperplane fitted to points."""
+    points = np.asarray(points, dtype=float)
+
+    if points.ndim != 2 or points.shape[1] < 2:
+        raise ValueError("points must have shape (n, d) with d >= 2")
+    if not np.all(np.isfinite(points)):
+        raise ValueError("points must contain only finite values")
+
+    n_points, n_dimensions = points.shape
+    if n_points < n_dimensions:
+        raise ValueError(
+            f"at least {n_dimensions} points are required in {n_dimensions} dimensions"
+        )
+
+    center = points.mean(axis=0)
+    centered = points - center
+    _, singular_values, vh = np.linalg.svd(centered, full_matrices=False)
+
+    tolerance = (
+        max(centered.shape) * np.finfo(singular_values.dtype).eps * singular_values[0]
+    )
+    if singular_values[-2] <= tolerance:
+        raise ValueError("points do not determine a unique plane")
+
+    normal = vh[-1]
+    if normal[np.argmax(np.abs(normal))] < 0:
+        normal = -normal
+
+    if warn and n_points > n_dimensions:
+        _warnings.warn(
+            "points overdetermine the plane; using a least-squares fit",
+            UserWarning,
+            stacklevel=2,
+        )
+
+    return center, normal
 
 
 def circle_segment(
@@ -375,7 +412,9 @@ def cartesian_to_cylindrical(
         return np.array([r, phi, z])
 
 
-def cartesian_to_polar(x: npt.ArrayLike | float, y: npt.ArrayLike | float) -> np.ndarray:
+def cartesian_to_polar(
+    x: npt.ArrayLike | float, y: npt.ArrayLike | float
+) -> np.ndarray:
     """Convert 2D Cartesian coordinates to polar coordinates."""
     return np.array([np.sqrt(x**2 + y**2), np.arctan2(y, x)])
 

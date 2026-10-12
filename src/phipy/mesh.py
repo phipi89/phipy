@@ -429,11 +429,13 @@ def largest_segment(
 ) -> trimesh.Trimesh:
     """Return the largest connected mesh component by vertex count or volume."""
     if metric == "count":
+
         def key(part: trimesh.Trimesh) -> int:
             return len(part.vertices)
 
         watertight = False
     elif metric == "volume":
+
         def key(part: trimesh.Trimesh) -> float:
             return part.volume
 
@@ -578,7 +580,58 @@ def wireframe_vertices(mesh: trimesh.Trimesh, skip_planar: bool = True) -> np.nd
     segments = wireframe(mesh, skip_planar=skip_planar)
     points = np.unique(np.concatenate(segments), axis=0)
     mask = [
-        np.all(np.concatenate(segments) == point, axis=-1).sum() > 2
-        for point in points
+        np.all(np.concatenate(segments) == point, axis=-1).sum() > 2 for point in points
     ]
     return points[mask]
+
+
+def voxel_volume_mesh(mask, pitch=1.0, origin=(0.0, 0.0, 0.0)):
+    """Build a jagged surface mesh from the exposed faces of a voxel mask."""
+    mask = np.asarray(mask, dtype=bool)
+    if mask.ndim != 3:
+        raise ValueError(f"mask must be a 3D array, got shape {mask.shape}.")
+
+    pitch = float(pitch)
+    origin = np.asarray(origin, dtype=float).reshape(3)
+
+    vertices = []
+    faces = []
+    vertex_index = {}
+
+    face_defs = [
+        ((-1, 0, 0), [(0, 0, 0), (0, 0, 1), (0, 1, 1), (0, 1, 0)]),
+        ((1, 0, 0), [(1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 0, 1)]),
+        ((0, -1, 0), [(0, 0, 0), (1, 0, 0), (1, 0, 1), (0, 0, 1)]),
+        ((0, 1, 0), [(0, 1, 0), (0, 1, 1), (1, 1, 1), (1, 1, 0)]),
+        ((0, 0, -1), [(0, 0, 0), (0, 1, 0), (1, 1, 0), (1, 0, 0)]),
+        ((0, 0, 1), [(0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)]),
+    ]
+
+    def get_vertex(corner):
+        corner = tuple(int(v) for v in corner)
+        if corner not in vertex_index:
+            vertex_index[corner] = len(vertices)
+            vertices.append(origin + pitch * np.asarray(corner, dtype=float))
+        return vertex_index[corner]
+
+    nx, ny, nz = mask.shape
+    for i, j, k in np.argwhere(mask):
+        for normal, corners in face_defs:
+            ni = i + normal[0]
+            nj = j + normal[1]
+            nk = k + normal[2]
+            neighbor_inside = (
+                0 <= ni < nx and 0 <= nj < ny and 0 <= nk < nz and mask[ni, nj, nk]
+            )
+            if neighbor_inside:
+                continue
+
+            faces.append(
+                [get_vertex((i + di, j + dj, k + dk)) for di, dj, dk in corners]
+            )
+
+    return trimesh.Trimesh(
+        vertices=np.asarray(vertices, dtype=float),
+        faces=np.asarray(faces, dtype=np.int64),
+        process=False,
+    )

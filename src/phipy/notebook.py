@@ -7,7 +7,7 @@ except ImportError:
 def setup(
     autoreload: bool = True,
     autoreload_mode: str = "3",
-    matplotlib: str | None = "widget",
+    matplotlib: str | None = "inline",
     display_width: str | None = "100%",
 ) -> None:
     """Configure common IPython notebook defaults; no-op outside IPython."""
